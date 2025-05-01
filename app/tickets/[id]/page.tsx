@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
 import { use } from "react"
 import { TicketPageSkeleton } from "@/components/ticket-page-skeleton" 
-import { PostgrestResponse } from '@supabase/supabase-js'
+import { redirect } from "next/navigation"
 
 interface Ticket {
   id: string
@@ -69,7 +69,7 @@ export default function TicketPage({ params }: { params: Promise<{ id: string }>
         
         setMemberTickets(userTickets || [])
       } catch (error) {
-        setError("Билет не активен")
+        setError(`Билет не активен ${error}`)
       } finally {
         setLoading(false)
       }
@@ -79,7 +79,7 @@ export default function TicketPage({ params }: { params: Promise<{ id: string }>
   }, [id])
 
   if (loading) return <TicketPageSkeleton/>
-  if (error) return <div className="min-h-screen flex items-center justify-center">Ошибка: {error}</div>
+  if (error) return redirect("/members/add?ticketId=" + id)
   if (!ticket || !user) return <div className="min-h-screen flex items-center justify-center">Билет не найден</div>
 
   // Format the date
